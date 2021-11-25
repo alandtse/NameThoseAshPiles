@@ -84,9 +84,6 @@ else ()
 	)
 endif ()
 
-find_package(Boost MODULE REQUIRED)
-find_package(spdlog REQUIRED CONFIG)
-
 find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
 # ---- Add source files ----
@@ -139,9 +136,7 @@ target_include_directories(
 target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
-		Boost::headers
 		CommonLibSSE::CommonLibSSE
-		spdlog::spdlog
 )
 
 if (MSVC)

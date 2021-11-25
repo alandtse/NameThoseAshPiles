@@ -7,20 +7,22 @@ void OnInit(SKSE::MessagingInterface::Message* a_msg)
 	}
 }
 
-extern "C" __declspec(dllexport) constexpr auto SKSEPlugin_Version = []() {
-	SKSE::PluginVersionData v{};
-	v.pluginVersion = Version::MAJOR;
-	v.PluginName("Name Those Ashpiles");
-	v.AuthorName("powerofthree"sv);
-	v.CompatibleVersions({ SKSE::RUNTIME_1_6_318 });
+extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
+	SKSE::PluginVersionData v;
+	v.PluginVersion(Version::MAJOR);
+	v.PluginName("Name Those Ashpiles"sv);
+	v.AuthorName("powerofthree");
+	v.UsesAddressLibrary(true);
+	v.CompatibleVersions({ SKSE::RUNTIME_LATEST });
+
 	return v;
 }();
 
-bool InitLogger()
+void InitializeLog()
 {
 	auto path = logger::log_directory();
 	if (!path) {
-		return false;
+		stl::report_and_fail("Failed to find standard logging directory"sv);
 	}
 
 	*path /= Version::PROJECT;
@@ -36,15 +38,11 @@ bool InitLogger()
 	spdlog::set_pattern("[%H:%M:%S:%e] %v"s);
 
 	logger::info(FMT_STRING("{} v{}"), Version::PROJECT, Version::NAME);
-
-	return true;
 }
 
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
 {
-	if (!InitLogger()) {
-		return false;
-	}
+	InitializeLog();
 
 	logger::info("loaded");
 
